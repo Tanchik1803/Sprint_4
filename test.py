@@ -1,3 +1,4 @@
+from conftest import collector
 import pytest
 
 from main import BooksCollector
@@ -58,7 +59,6 @@ class TestBook:
     def test_add_book_in_favorites(self, collector):
         #Проверка, что книга входит в избранное
         collector.add_new_book('Любовь и голуби')
-        collector.set_book_genre('Любовь и голуби', 'Комедии')
         collector.add_book_in_favorites('Любовь и голуби')
         assert 'Любовь и голуби' in collector.get_list_of_favorites_books()
 
@@ -70,7 +70,7 @@ class TestBook:
         collector.delete_book_from_favorites('Колобок')
         assert 'Колобок' not in collector.get_list_of_favorites_books()
     
-    def test_get_books_for_children(self, collector):
+    def test_get_books_for_children(self, ):
         #Проверка, что возвращается список книг, подходящих для детей"""
         collector.add_new_book('Любовь и голуби')
         collector.set_book_genre('Любовь и голуби', 'Комедии')
@@ -80,3 +80,20 @@ class TestBook:
         collector.set_book_genre('Колобок', 'Мультфильмы')
         assert collector.get_books_for_children() == ['Золотой ключик', 'Колобок']
    
+
+    def test_get_book_genre_exists_with_genre(self, collector):
+        #Проверка на получение жанра книги с установленным жанром
+        collector.add_new_book('Хоббит, туда и обратно')
+        collector.set_book_genre('Хоббит, туда и обратно', 'Фантастика')
+        genre = collector.get_book_genre('Хоббит, туда и обратно')
+        assert genre == 'Фантастика'
+
+     def test_get_books_genre(self, collector):  
+        #Проверка, что get_books_genre() возвращает словарь с корректными жанрами книг.
+        collector.add_new_book('Шерлок Холмс')
+        collector.set_book_genre('Шерлок Холмс', 'Детективы')
+        assert collector.get_books_genre() == {'Шерлок Холмс': 'Детективы'}
+
+    def test_get_book_genre_not_add (self, collector):
+        #Проверка, если жанр книги не установлен, то вернется None
+        assert collector.get_book_genre('Собачья жизнь') is None
